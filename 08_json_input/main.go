@@ -1,15 +1,14 @@
 package main
 
 /*
-	Etapa 8:
-	Objetivo: Receber e processar dados em JSON via POST.
-	Agora o handler do endpoint "/bye" usa o método BindJSON do Gin para decodificar automaticamente um JSON no corpo da requisição.
-	Isso representa uma prática comum em APIs REST reais.
+	Etapa 8 - Leitura de JSON com Gin
 
-	Exemplo de JSON esperado:
-	{
-		"message": "Olá, Giovana!"
-	}
+	Nesta etapa, avançamos para a leitura de dados em formato JSON no corpo da requisição.
+
+	Ao invés de ler o body como texto (etapa 7), usamos o método BindJSON do Gin
+	para converter diretamente o JSON enviado em um mapa Go (`map[string]string`).
+
+	Isso é mais seguro, limpo e escalável, especialmente em APIs RESTful modernas.
 */
 
 import (
@@ -21,48 +20,52 @@ import (
 )
 
 func main() {
+	// Inicializa o roteador
 	router := gin.Default()
 
+	// Rotas definidas
 	router.GET("/", home)
 	router.GET("/hello", hello)
 	router.POST("/bye", bye)
 
-	// Logs no terminal (visíveis quando o servidor inicia)
+	// Mensagens informativas no terminal
 	fmt.Println("Welcome!")
 	log.Println("Server started at http://localhost:8080/")
 
-	// Inicia o servidor na porta 8080
+	// Inicia o servidor e trata erro de execução
 	if err := router.Run(":8080"); err != nil {
 		log.Fatal(err)
 	}
 }
 
-// Rota GET "/"
+// home responde a GET /
 func home(c *gin.Context) {
 	c.String(http.StatusOK, "Welcome to the home page!")
 }
 
-// Rota GET "/hello"
+// hello responde a GET /hello
 func hello(c *gin.Context) {
 	c.String(http.StatusOK, "Hello, world!")
 }
 
-// Rota POST "/bye" recebendo JSON {"message": "alguma coisa"}
+// bye responde a POST /bye, lendo JSON do corpo da requisição
 func bye(c *gin.Context) {
+	// Declaração de um mapa para armazenar os dados recebidos
 	var msg map[string]string
 
-	// Tenta ler o JSON para dentro do map
+	// Tenta fazer o binding do JSON recebido
 	if err := c.BindJSON(&msg); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to bind JSON"})
 		return
 	}
 
-	// Verifica se o campo "message" existe
+	// Verifica se o campo "message" existe no JSON
 	message, exists := msg["message"]
 	if !exists {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Message field is missing"})
 		return
 	}
 
+	// Envia a resposta com a mensagem recebida
 	c.String(http.StatusOK, "Received POST request with message: %s", message)
 }

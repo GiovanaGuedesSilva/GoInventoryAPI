@@ -1,32 +1,62 @@
 package main
 
 /*
-	Etapa 4 - Substituindo net/http por Gin
+	Etapa 4 - Substituição de net/http por Gin
 
-	Aqui introduzimos o framework Gin, uma das bibliotecas mais populares
-	para criação de APIs em Go, que oferece roteamento mais poderoso,
-	middlewares e tratamento simplificado de JSON.
+	Nesta etapa, trocamos o uso da biblioteca padrão `net/http` pelo framework `Gin`,
+	que facilita a criação de APIs RESTful com mais flexibilidade e menos código repetitivo.
 
-	Esta etapa configura um servidor Gin e define uma rota GET que responde com JSON.
+	As rotas implementadas são equivalentes à etapa anterior,
+	mas agora com handlers separados para cada método HTTP usando recursos do Gin.
 */
 
 import (
-	"github.com/gin-gonic/gin" // Framework para criação de APIs HTTP em Go
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// Cria um roteador com configurações padrão do Gin
+	// Inicializa o roteador com configurações padrão (logger e recovery middleware)
 	router := gin.Default()
 
-	// Define uma rota GET na raiz "/" que será tratada pela função handler
-	router.GET("/", handler)
+	// Define as rotas para a URL "/"
+	router.GET("/", homeGet)
+	router.POST("/", homePost)
+	router.PUT("/", homePut)
+	router.DELETE("/", homeDelete)
+
+	// Outras rotas
+	router.GET("/hello", hello)
+	router.POST("/bye", bye)
 
 	// Inicia o servidor na porta 8080
 	router.Run(":8080")
 }
 
-// handler é a função que responde à rota GET "/"
-func handler(c *gin.Context) {
-	// Retorna um JSON com a mensagem "Hello World" e status 200 (OK)
-	c.JSON(200, gin.H{"message": "Hello World"})
+// Handlers para a rota "/"
+func homeGet(c *gin.Context) {
+	c.String(http.StatusOK, "Welcome to the home page!")
+}
+
+func homePost(c *gin.Context) {
+	c.String(http.StatusOK, "Post to the home page!")
+}
+
+func homePut(c *gin.Context) {
+	c.String(http.StatusOK, "Put to the home page!")
+}
+
+func homeDelete(c *gin.Context) {
+	c.String(http.StatusOK, "Delete the home page!")
+}
+
+// Handler para a rota "/hello"
+func hello(c *gin.Context) {
+	c.String(http.StatusOK, "Hello, world!")
+}
+
+// Handler para a rota "/bye"
+func bye(c *gin.Context) {
+	c.String(http.StatusOK, "Goodbye guys!")
 }
