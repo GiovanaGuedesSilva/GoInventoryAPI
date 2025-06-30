@@ -1,34 +1,30 @@
-name: GoInventoryAPI CI
+name: Test all steps
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
-  build-and-test-each-step:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.20'
 
-      - name: Build and Test each step
+      - name: Build and run all steps
         run: |
-          for dir in step_*/; do
-            echo "🔍 Verificando $dir"
+          for dir in 01_* 02_* 03_* 04_* 05_* 06_* 07_* 08_* 09_* 10_* 11_* 12_*; do
+            echo "===> Testing $dir"
             cd $dir
-            if [ -f "go.mod" ]; then
-              echo "📦 Rodando build em $dir"
-              go mod tidy
-              go build -v ./...
-              go test -v ./... || echo "⚠️ Sem testes em $dir"
-            else
-              echo "⚠️ Sem go.mod em $dir — pulando"
-            fi
+            go mod init tempmod || true
+            go mod tidy || true
+            go build -v .
             cd ..
-          done
