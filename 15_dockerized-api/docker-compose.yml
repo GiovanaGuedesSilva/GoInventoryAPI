@@ -1,0 +1,44 @@
+version: '3.8'  # Versão da especificação do Docker Compose
+
+services:
+  app:
+    # Serviço da aplicação Go
+    build:
+      context: .              # Usa o diretório atual como contexto (onde está o Dockerfile)
+      dockerfile: Dockerfile  # Nome do Dockerfile usado para construir a imagem
+    ports:
+      - "8080:8080"           # Mapeia a porta 8080 do contêiner para a 8080 do host
+    depends_on:
+      - mysql                 # Garante que o serviço MySQL seja iniciado antes da aplicação
+    # volumes:
+    #   - .:/app              # (opcional) Monta o código local dentro do contêiner para hot reload no dev
+    # command: go run main.go # (opcional) Executa diretamente via go run (útil em dev)
+    # restart: unless-stopped # (opcional) Reinicia o contêiner se ele for parado inesperadamente
+
+  mysql:
+    # Serviço do banco de dados MySQL
+    image: mysql:8.0          # Usa a imagem oficial do MySQL na versão 8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root       # Senha do usuário root
+      MYSQL_DATABASE: inventory       # Nome do banco de dados a ser criado automaticamente
+      MYSQL_USER: api_user            # Usuário personalizado que será criado
+      MYSQL_PASSWORD: api_password    # Senha para o usuário personalizado
+    ports:
+      - "3306:3306"           # Mapeia a porta do contêiner para a mesma porta no host
+    volumes:
+      - mysql_data:/var/lib/mysql             # Volume para persistência dos dados do banco
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Script SQL que será executado ao iniciar
+
+  phpmyadmin:
+    # Interface web para visualizar e gerenciar o banco de dados
+    image: phpmyadmin:5.2.1-apache  # Usa a imagem phpMyAdmin com servidor Apache embutido
+    environment:
+      PMA_HOST: mysql              # Nome do serviço MySQL (usado como host de conexão)
+      MYSQL_ROOT_PASSWORD: root    # Senha do root usada para autenticação no painel
+    ports:
+      - "8081:80"                  # Acessível em http://localhost:8081
+    depends_on:
+      - mysql                      # Só sobe depois que o MySQL estiver pronto
+
+volumes:
+  mysql_data:                      # Volume nomeado para persistência de dados do MySQL

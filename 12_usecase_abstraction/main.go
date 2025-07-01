@@ -7,6 +7,10 @@ package main
 	O objetivo é desacoplar o handler da implementação concreta da lógica de negócio.
 	Isso permite maior flexibilidade, facilita testes unitários com mocks
 	e é um passo importante rumo à arquitetura limpa.
+
+	A interface serve para desacoplar o código. Isso quer dizer:
+		O handler não se importa como o usecase funciona por dentro.
+		Ele só precisa saber: "saveItem salva um item" e "listItems lista os iten
 */
 
 import (
@@ -125,6 +129,7 @@ func (r *repository) listItems() (mapRepo, error) {
 ///////////////////////////////////////////////////////////////////////////////
 
 // itemUsecasePort define as operações que o handler espera da camada de negócio
+// O handler fala: "Me dá qualquer coisa que saiba salvar e listar item."
 type itemUsecasePort interface {
 	saveItem(item) error
 	listItems() (mapRepo, error)
@@ -179,3 +184,9 @@ type item struct {
 
 // mapRepo é um alias para o tipo de armazenamento em memória
 type mapRepo map[int]item
+
+// Handler → Recebe a requisição HTTP e envia a resposta.
+// Usecase (caso de uso) → Onde está a lógica de negócio (ex: validar se o item já existe).
+// Repository → Armazena os dados (neste caso, na memória).
+// Domain → Define o que é um "item" (a estrutura dos dados).
+// Interface (itemUsecasePort) → Uma "promessa" do que a camada de negócio precisa saber fazer.

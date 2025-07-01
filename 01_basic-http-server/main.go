@@ -26,6 +26,8 @@ func main() {
 }
 
 // handler é a função responsável por lidar com requisições à rota "/"
+// w http.ResponseWriter: é a resposta que será enviada de volta ao cliente (ex: navegador, Postman...).
+// r *http.Request: é a requisição que foi feita pelo cliente (inclui URL, cabeçalhos, método, corpo, etc).
 func handler(w http.ResponseWriter, r *http.Request) {
 	// Retorna um JSON com a mensagem "Hello World"
 	json.NewEncoder(w).Encode(map[string]string{"message": "Hello World"})

@@ -19,6 +19,7 @@ import (
 
 func main() {
 	// Registra múltiplos handlers para rotas diferentes
+	// "Quando alguém acessar /, use a função home para lidar com essa requisição."
 	http.HandleFunc("/", home)
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/bye", bye)
