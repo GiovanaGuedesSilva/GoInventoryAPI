@@ -21,15 +21,21 @@ Cada diretório representa uma etapa evolutiva da API, com foco em modularizaç�
 
 ```bash
 GoInventoryAPI/
-├── step_01_basic_http/             # Servidor HTTP básico com uma rota
-├── step_02_multi_endpoints/        # Separação do handler em função nomeada
-├── step_03_http_methods/           # Suporte a múltiplos métodos HTTP (GET, POST)
-├── step_04_using_gin/              # Substituição de net/http por Gin
-├── step_05_adding_comments/        # Comentários explicativos no código com Gin
-├── step_06_response_struct/        # Uso de struct para resposta JSON
-├── step_07_separate_routes_setup/  # Separação da função de configuração de rotas
-├── step_08_controller_structure/   # Criação de controller com método para handler
-├── README.md                       # Este arquivo
+├── step_01_basic_http/              # Servidor HTTP básico com uma rota
+├── step_02_multi_endpoints/         # Múltiplas rotas com net/http
+├── step_03_http_methods/            # Uso de métodos HTTP diferentes (GET, POST, etc.)
+├── step_04_using_gin/               # Substituição de net/http por Gin
+├── step_05_gin_with_comments/       # Mesmo código anterior, agora totalmente comentado
+├── step_06_gin_improved_post/       # POST com mensagem fixa no body
+├── step_07_gin_body_parsing/        # POST lendo o corpo da requisição
+├── step_08_gin_json_parsing/        # POST com JSON e logging
+├── step_09_handler_struct/          # Criação de struct handler com métodos associados
+├── step_10_usecase_layer/           # Introdução da camada de Usecase
+├── step_11_repository_layer/        # Implementação de um repositório em memória
+├── step_12_interface_usecase/       # Abstração da camada de usecase via interface
+├── go.mod
+├── go.sum
+└── README.md                        # Este arquivo
 ```
 
 ---
