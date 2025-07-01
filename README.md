@@ -10,32 +10,164 @@ Este projeto tem como objetivo controlar produtos, quantidades e operações bá
 - [Go (Golang)](https://golang.org/)
 - [Gin Web Framework](https://github.com/gin-gonic/gin)
 - [net/http](https://pkg.go.dev/net/http) (usado nas etapas iniciais)
-- Padrão REST
-- (Opcional: Docker, Banco de Dados, Swagger — em etapas futuras)
+- Banco de dados MySQL
+- Docker e Docker Compose
+- phpMyAdmin (interface web para o MySQL)
 
 ---
+
+## Pré-requisitos
+
+1. Docker instalado em seu sistema.  
+2. Docker Compose instalado em seu sistema.  
+3. Conexão com a internet para baixar as imagens necessárias do Docker.
+
+## Conteúdo do Repositório
+
+- `Dockerfile`: Arquivo de configuração para construir a imagem da aplicação em Golang.  
+- `docker-compose.yml`: Arquivo de configuração para orquestrar os serviços Docker (aplicação, MySQL e phpMyAdmin).  
+- `init.sql`: Script SQL para inicializar o banco de dados MySQL com o esquema necessário e o usuário da API.  
+- Código-fonte da API de Inventário.
+
+
+## Instruções de Configuração
+
+### Passo 1: Configurar o Banco de Dados
+
+Antes de iniciar os serviços Docker, é necessário garantir que o script `init.sql` seja executado para configurar o banco de dados.  
+Esse script cria o banco de dados `inventory`, a tabela `items` e um usuário da API com as permissões adequadas.
+
+### Passo 2: Iniciar os Serviços com Docker
+
+Use o Docker Compose para iniciar todos os serviços definidos no arquivo `docker-compose.yml`:
+
+```sh
+docker-compose up --build
+```
+
+Esse comando fará o seguinte:
+
+1. Construirá a imagem da aplicação em Golang.  
+2. Iniciará o contêiner do MySQL.  
+3. Iniciará o contêiner do phpMyAdmin.  
+4. Iniciará o contêiner da aplicação Golang.
+
+### Passo 3: Executar o Script SQL no phpMyAdmin
+
+Abra seu navegador e acesse [http://localhost:8081](http://localhost:8081) para abrir o phpMyAdmin.  
+Use as seguintes credenciais para login:
+
+- **Usuário:** `root`  
+- **Senha:** `root`
+
+Depois de acessar:
+
+1. Selecione o banco de dados `inventory`.  
+2. Vá até a aba "SQL".  
+3. Copie e cole o conteúdo do arquivo `init.sql`.  
+4. Execute o script.
+
+### Passo 4: Verificar o Funcionamento da API
+
+Com todos os contêineres em execução e o banco de dados configurado, acesse [http://localhost:8080](http://localhost:8080) no navegador, ou utilize ferramentas como `curl` ou `Postman` para interagir com os endpoints `/items`.
+
+## Endpoints da API
+
+### `POST /items` - Criar um novo item no inventário
+
+Exemplo de corpo JSON:
+
+```json
+{
+  "id": 1,
+  "code": "ITEM001",
+  "title": "Example Item",
+  "description": "This is an example item",
+  "price": 29.99,
+  "stock": 50,
+  "status": "available",
+  "created_at": "2024-07-17T15:04:05Z",
+  "updated_at": "2024-07-17T15:04:05Z"
+}
+```
+
+### `GET /items` - Obter todos os itens do inventário
+
+## Exemplos de Uso com `curl`
+
+### Criar um novo item
+
+```sh
+curl -X POST http://localhost:8080/items -H "Content-Type: application/json" -d '{
+  "id": 1,
+  "code": "ITEM001",
+  "title": "Example Item",
+  "description": "This is an example item",
+  "price": 29.99,
+  "stock": 50,
+  "status": "available",
+  "created_at": "2024-07-17T15:04:05Z",
+  "updated_at": "2024-07-17T15:04:05Z"
+}'
+```
+
+### Obter a lista de itens
+
+```sh
+curl http://localhost:8080/items
+```
+
+## Solução de Problemas
+
+### Erro de conexão com o MySQL
+
+Verifique se:
+
+1. O contêiner do MySQL está em execução.  
+2. O script `init.sql` foi executado corretamente.  
+3. As credenciais de banco de dados no código coincidem com as do script SQL.
+
+### Verificar logs dos contêineres
+
+```sh
+docker-compose logs app
+docker-compose logs mysql
+docker-compose logs phpmyadmin
+```
+
+## Conclusão
+
+Seguindo esses passos, você conseguirá configurar e executar corretamente a API de Inventário.  
+Se encontrar problemas, consulte os logs dos contêineres e verifique se todos os serviços estão configurados corretamente.
 
 ## 📁 Estrutura do Projeto
 
 Cada diretório representa uma etapa evolutiva da API, com foco em modularização, boas práticas e Clean Architecture.
 
 ```bash
-GoInventoryAPI/
-├── step_01_basic_http/              # Servidor HTTP básico com uma rota
-├── step_02_multi_endpoints/         # Múltiplas rotas com net/http
-├── step_03_http_methods/            # Uso de métodos HTTP diferentes (GET, POST, etc.)
-├── step_04_using_gin/               # Substituição de net/http por Gin
-├── step_05_gin_with_comments/       # Mesmo código anterior, agora totalmente comentado
-├── step_06_gin_improved_post/       # POST com mensagem fixa no body
-├── step_07_gin_body_parsing/        # POST lendo o corpo da requisição
-├── step_08_gin_json_parsing/        # POST com JSON e logging
-├── step_09_handler_struct/          # Criação de struct handler com métodos associados
-├── step_10_usecase_layer/           # Introdução da camada de Usecase
-├── step_11_repository_layer/        # Implementação de um repositório em memória
-├── step_12_interface_usecase/       # Abstração da camada de usecase via interface
-├── go.mod
-├── go.sum
-└── README.md                        # Este arquivo
+C:\GoProjects\GoInventoryAPI
+│
+├── .github/                              # Configurações e workflows do GitHub Actions
+├── 01_basic-http-server/                 # Servidor HTTP básico com uma rota fixa
+├── 02_multi_endpoints/                   # Múltiplos endpoints usando net/http
+├── 03_http_methods/                      # Uso de diferentes métodos HTTP (GET, POST, etc.)
+├── 04_using-gin-framework/               # Substituição do net/http pelo framework Gin
+├── 05_adding-comments/                   # Código da etapa anterior com comentários explicativos
+├── 06_handler_logic/                     # Introdução de lógica de manipulação no handler
+├── 07_read_body_plain/                   # Leitura do corpo da requisição como texto plano
+├── 08_json_input/                        # Leitura e parse de JSON via body da requisição
+├── 09_struct_handlers/                   # Refatoração com uso de struct handler e métodos
+├── 10_usecase_domain/                    # Introdução da camada de domínio (usecase)
+├── 11_query-param-handling/              # Manipulação de parâmetros de query na URL
+├── 12_usecase_abstraction/               # Abstração da camada de usecase com interface
+├── 13_layered-architecture-separation/   # Separação em camadas: handler, usecase, repository
+├── 14_clean-architecture-refactor/       # Refatoração para aderir à Clean Architecture
+├── 15_dockerized-api/                    # Containerização da API com Docker e Docker Compose
+├── 16_final/                             # Versão final consolidada da API
+├── go.mod                                # Arquivo de definição de módulos Go
+├── go.sum                                # Checksum das dependências Go
+└── README.md                             # Documentação principal do projeto
+
 ```
 
 ---
