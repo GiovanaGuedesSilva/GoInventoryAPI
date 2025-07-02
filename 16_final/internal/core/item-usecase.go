@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
+	"time"
 
 	"api/internal/core/item" // Pacote que contém a entidade Item e a interface do repositório
-	"api/pkg/config"         // Pacote onde vivem os erros globais, como config.ErrNotFound
+	// Pacote onde vivem os erros globais, como config.ErrNotFound
 )
 
 /*
@@ -41,6 +42,11 @@ Retorna:
 - Erro encadeado com contexto, caso ocorra problema no repositório.
 */
 func (u *ItemUsecase) SaveItem(it item.Item) error {
+	// Inicializa os timestamps
+	now := time.Now()
+	it.CreatedAt = now
+	it.UpdatedAt = now
+
 	if err := u.repo.SaveItem(&it); err != nil {
 		return fmt.Errorf("error saving item: %w", err)
 	}
@@ -62,7 +68,9 @@ func (u *ItemUsecase) ListItems() (item.MapRepo, error) {
 		return nil, fmt.Errorf("error in repository: %w", err)
 	}
 	if len(its) == 0 {
-		return nil, config.ErrNotFound
+		// return nil, config.ErrNotFound
+		// Quero que retorne a lista mesmo se estiver vazia (não é erro não ter itens)
+
 	}
 	return its, nil
 }
@@ -76,6 +84,9 @@ Retorna:
 - Erro encadeado com contexto, se houver falha.
 */
 func (u *ItemUsecase) UpdateItem(it item.Item) error {
+	// Atualiza o timestamp de modificação
+	it.UpdatedAt = time.Now()
+
 	if err := u.repo.UpdateItem(&it); err != nil {
 		return fmt.Errorf("error updating item: %w", err)
 	}

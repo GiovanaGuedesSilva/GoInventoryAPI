@@ -8,7 +8,6 @@ import (
 
 	"api/internal/core"
 	"api/internal/core/item"
-	"api/pkg/config"
 )
 
 /*
@@ -67,25 +66,19 @@ ListItems lida com a requisição HTTP para listar todos os itens cadastrados.
 
 Passos:
 1. Chama o método da camada de caso de uso `ListItems`.
-2. Se retornar erro "not found", retorna 404 (Not Found).
-3. Se for outro erro, retorna 500 (Internal Server Error).
-4. Se sucesso, retorna status 200 com a lista de itens no corpo da resposta.
+2. Se ocorrer erro, retorna 500 (Internal Server Error).
+3. Se sucesso, retorna status 200 com a lista de itens (vazia ou não) no corpo da resposta.
 */
 func (h *handler) ListItems(c *gin.Context) {
 	// Busca todos os itens
 	its, err := h.core.ListItems()
 	if err != nil {
-		// Verifica se o erro é "não encontrado"
-		if err == config.ErrNotFound {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		} else {
-			// Se for outro erro qualquer
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		}
+		// Se houver erro na operação, retorna 500
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Retorna a lista de itens com status 200
+	// Retorna a lista de itens com status 200 (mesmo se vazia)
 	c.JSON(http.StatusOK, its)
 }
 

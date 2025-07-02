@@ -9,6 +9,8 @@ import (
 	core "api/internal/core"                 // Camada de lógica de negócio
 	item "api/internal/core/item"            // Pacote com o modelo e repositórios de Item
 	mysqlsetup "api/internal/platform/mysql" // Configuração do cliente MySQL
+
+	_ "github.com/go-sql-driver/mysql" // Driver MySQL para o pacote database/sql
 )
 
 func main() {

@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS items (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- Atualiza sempre que o registro é alterado
 );
 
--- Cria o usuário 'api_user' com a senha 'api_password', acessível de qualquer host
-CREATE USER 'api_user'@'%' IDENTIFIED BY 'api_password';
+-- Cria o usuário 'api_user' com a senha 'api_password', se ainda não existir
+CREATE USER IF NOT EXISTS 'api_user'@'%' IDENTIFIED BY 'api_password';
 
 -- Concede todos os privilégios no banco 'inventory' ao usuário criado
 GRANT ALL PRIVILEGES ON inventory.* TO 'api_user'@'%';
